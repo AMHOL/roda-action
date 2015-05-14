@@ -5,13 +5,14 @@ A plugin for Roda to resolve actions from roda-container
 ## Installation
 
 ```ruby
-gem 'roda-action', '0.0.1'
+gem 'roda-action', '0.0.2'
 ```
 
 ## Usage
 
 ```ruby
 class MyApplication < Roda
+  plugin :json
   plugin :action
 end
 
@@ -23,19 +24,19 @@ class UsersController
   end
 
   def index
-    repository.values
+    repository
   end
 
   def show(user_id)
-    repository[user_id]
+    repository[user_id.to_i - 1]
   end
 end
 
 MyApplication.register(:users_controller) do
-  UsersController.new({
-    '1' => { name: 'Jack' },
-    '2' => { name: 'Gill' }
-  })
+  UsersController.new([
+    { name: 'Jack' },
+    { name: 'Gill' }
+  ])
 end
 
 MyApplication.route do |r|
