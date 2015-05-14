@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.files        = Dir['README.md', 'LICENSE.txt', 'lib/**/*']
   spec.require_path = 'lib'
 
-  spec.add_runtime_dependency 'roda-container', '0.0.2'
+  spec.add_runtime_dependency 'roda-container', '0.0.3'
 
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'roda'
