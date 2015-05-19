@@ -5,7 +5,7 @@ A plugin for Roda to resolve actions from roda-container
 ## Installation
 
 ```ruby
-gem 'roda-action', '0.0.2'
+gem 'roda-action', '0.0.3'
 ```
 
 ## Usage
