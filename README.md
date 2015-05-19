@@ -54,6 +54,8 @@ end
 
 If you wish to have access to the usual Roda application instance methods in your registered controllers, it is recommended that you register the application and resolve it for use in your controllers:
 
+NOTE: Be sure to use `.instance` as below, see: https://github.com/AMHOL/roda-container#thread-safety
+
 ```ruby
 class MyApplication < Roda
   plugin :json
@@ -91,7 +93,10 @@ MyApplication.register(:users_repository, [
 ])
 
 MyApplication.register(:users_controller) do
-  UsersController.new(MyApplication.instance.resolve(:app), MyApplication.resolve(:users_repository))
+  UsersController.new(
+    MyApplication.instance.resolve(:app),
+    MyApplication.resolve(:users_repository)
+  )
 end
 
 MyApplication.route do |r|
