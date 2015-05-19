@@ -91,11 +91,11 @@ MyApplication.register(:users_repository, [
 ])
 
 MyApplication.register(:users_controller) do
-  UsersController.new(MyApplication.resolve(:app), MyApplication.resolve(:users_repository))
+  UsersController.new(MyApplication.instance.resolve(:app), MyApplication.resolve(:users_repository))
 end
 
 MyApplication.route do |r|
-  MyApplication.register(:app, self, call: false)
+  MyApplication.instance.register(:app, self, call: false)
 
   r.on 'users' do
     r.is do
