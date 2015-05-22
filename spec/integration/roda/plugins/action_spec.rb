@@ -28,7 +28,7 @@ Roda.register(:controller) { Controller.new }
 Roda.register(:concurrency_controller) { ConcurrencyController.new(Roda.instance.resolve(:app)) }
 
 Roda.route do |r|
-  Roda.instance.register(:app, self, call: false)
+  register(:app, self, call: false)
 
   r.on 'class_action' do
     r.is(&Roda.action(:controller, :index))

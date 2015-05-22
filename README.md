@@ -42,11 +42,11 @@ end
 MyApplication.route do |r|
   r.on 'users' do
     r.is do
-      r.get(&MyApplication.action(:users_controller, :index))
+      r.get(&action(:users_controller, :index))
     end
 
     r.is :id do |id|
-      r.get(&MyApplication.action(:users_controller, :show).bind_arguments(id))
+      r.get(&action(:users_controller, :show).bind_arguments(id))
     end
   end
 end
@@ -100,16 +100,16 @@ MyApplication.register(:users_controller) do
 end
 
 MyApplication.route do |r|
-  MyApplication.instance.register(:app, self, call: false)
+  register(:app, self, call: false)
 
   r.on 'users' do
     r.is do
-      r.get(&MyApplication.action(:users_controller, :index))
-      r.post(&MyApplication.action(:users_controller, :create))
+      r.get(&action(:users_controller, :index))
+      r.post(&action(:users_controller, :create))
     end
 
     r.is :id do |id|
-      r.get(&MyApplication.action(:users_controller, :show).bind_arguments(id))
+      r.get(&action(:users_controller, :show).bind_arguments(id))
     end
   end
 end
