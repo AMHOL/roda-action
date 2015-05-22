@@ -30,11 +30,19 @@ Roda.register(:concurrency_controller) { ConcurrencyController.new(Roda.instance
 Roda.route do |r|
   Roda.instance.register(:app, self, call: false)
 
-  r.on 'action' do
+  r.on 'class_action' do
     r.is(&Roda.action(:controller, :index))
 
     r.on :id do |id|
       r.get(&Roda.action(:controller, :show).bind_arguments(id))
+    end
+  end
+
+  r.on 'instance_action' do
+    r.is(&action(:controller, :index))
+
+    r.on :id do |id|
+      r.get(&action(:controller, :show).bind_arguments(id))
     end
   end
 
@@ -51,34 +59,52 @@ Roda.route do |r|
 end
 
 RSpec.describe 'action plugin' do
-  it 'binds a controller method to the matched route' do
-    get '/action', {}
+  context 'class action' do
+    it 'binds a controller method to the matched route' do
+      get '/class_action', {}
 
-    expect(last_response.body).to eq('It worked!!!')
+      expect(last_response.body).to eq('It worked!!!')
+    end
+
+    it 'allows binding of arguments to action methods' do
+      get '/class_action/1337', {}
+
+      expect(last_response.body).to eq('Now showing 1337')
+    end
   end
 
-  it 'allows binding of arguments to action methods' do
-    get '/action/1337', {}
+  context 'instance action' do
+    it 'binds a controller method to the matched route' do
+      get '/instance_action', {}
 
-    expect(last_response.body).to eq('Now showing 1337')
+      expect(last_response.body).to eq('It worked!!!')
+    end
+
+    it 'allows binding of arguments to action methods' do
+      get '/instance_action/1337', {}
+
+      expect(last_response.body).to eq('Now showing 1337')
+    end
   end
 
-  it 'is threadsafe' do
-    threads = []
-    queue = Queue.new
-    threads << Thread.new { queue << get('/concurrency/one', one: true) }
-    threads << Thread.new { queue << get('/concurrency/two', two: true) }
-    threads.each(&:join)
+  context 'threadsafe' do
+    it 'is threadsafe' do
+      threads = []
+      queue = Queue.new
+      threads << Thread.new { queue << get('/concurrency/one', one: true) }
+      threads << Thread.new { queue << get('/concurrency/two', two: true) }
+      threads.each(&:join)
 
-    response_1 = queue.pop
-    response_2 = queue.pop
+      response_1 = queue.pop
+      response_2 = queue.pop
 
-    if response_1.body =~ /^Request 1\:/
-      expect(response_1.body).to end_with("{\"one\"=>\"true\"}")
-      expect(response_2.body).to end_with("{\"two\"=>\"true\"}")
-    else
-      expect(response_2.body).to end_with("{\"one\"=>\"true\"}")
-      expect(response_1.body).to end_with("{\"two\"=>\"true\"}")
+      if response_1.body =~ /^Request 1\:/
+        expect(response_1.body).to end_with("{\"one\"=>\"true\"}")
+        expect(response_2.body).to end_with("{\"two\"=>\"true\"}")
+      else
+        expect(response_2.body).to end_with("{\"one\"=>\"true\"}")
+        expect(response_1.body).to end_with("{\"two\"=>\"true\"}")
+      end
     end
   end
 end

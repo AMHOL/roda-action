@@ -75,6 +75,12 @@ class Roda
           Action.new(resolve(controller_key).method(action))
         end
       end
+
+      module InstanceMethods
+        def action(*args, &block)
+          self.class.action(*args, &block)
+        end
+      end
     end
 
     register_plugin(:action, Action)
